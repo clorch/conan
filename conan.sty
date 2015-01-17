@@ -1,0 +1,126 @@
+% --------------------------------------------------------------------------
+% the ConAn package
+% 
+%   Typeset Conversation Analysis
+% 
+% --------------------------------------------------------------------------
+% Clemens Horch
+% Web:    https://github.com/clorch/conan/
+% E-Mail: mail@clemenshorch.de
+% --------------------------------------------------------------------------
+% Copyright (c) 2015 Clemens Horch
+% 
+% Permission is hereby granted, free of charge, to any person obtaining a copy 
+% of this software and associated documentation files (the "Software"), to deal 
+% in the Software without restriction, including without limitation the rights 
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
+% copies of the Software, and to permit persons to whom the Software is 
+% furnished to do so, subject to the following conditions:
+% 
+% The above copyright notice and this permission notice shall be included in 
+% all copies or substantial portions of the Software.
+% 
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+% FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+% DEALINGS IN THE SOFTWARE.
+%
+%--------------------------------------------------------------
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{conan}[2015/01/17 Conversation Analysis Formatting]
+
+\RequirePackage{xstring}
+\RequirePackage{covington}
+\RequirePackage{calc}
+
+\newif\if@ttfamily\@ttfamilyfalse
+\DeclareOption{tt}{
+	\@ttfamilytrue
+}
+
+\newif\if@singlebracket\@singlebracketfalse
+\DeclareOption{singlebracket}{
+  \@singlebrackettrue
+}
+
+\ProcessOptions\relax
+
+\newlength\@SpeakerWidth%
+
+\newenvironment{conan}[1][A]%
+	{\noindent\ignorespaces%
+	\setlength\@SpeakerWidth{\widthof{#1:}}%
+	\begin{enumerate}%
+	\item[(\exampleno)]}%
+	{\end{enumerate}\par\noindent%
+	\ignorespacesafterend}
+	
+\newenvironment{conan*}[1][A]%%
+	{\noindent\ignorespaces%
+	\setlength\@SpeakerWidth{\widthof{#1:}}%
+	\begin{enumerate}%
+	\item[]}%
+	{\end{enumerate}\par\noindent%
+	\ignorespacesafterend}
+	
+	
+\newenvironment{@vartab}[1]
+{\begin{tabular}{@{}p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{ }}}
+{\end{tabular}}
+
+\newcommand{\@simulline}[1]{{%
+\StrSubstitute{#1}{[}{\string& [}[\x]%
+\StrSubstitute{\x}{]}{\string& ]}[\x]%
+\tokenize{\x}{\x}%
+\expandafter}\x}
+
+\newcommand{\@simullineA}[1]{{%
+\StrSubstitute{#1}{[}{\string& \string~}[\x]%
+\StrSubstitute{\x}{]}{\string& \string~}[\x]%
+\tokenize{\x}{\x}%
+\expandafter}\x}
+
+\newcommand{\@simullineB}[1]{{%
+\StrSubstitute{#1}{[}{\string& \string\raisebox{0.7em}{[}}[\x]%
+\StrSubstitute{\x}{]}{\string& \string\raisebox{0.7em}{]}}[\x]%
+\tokenize{\x}{\x}%
+\expandafter}\x}
+
+\newcommand{\@simultab}[5]{%
+\begin{@vartab}{#5}
+\IfStrEq{#1}{}{}{#1:} & \@simulline{#2}\\
+\edef\LastSpeaker{#1}%
+\IfStrEq{#3}{}{}{#3:} & \@simulline{#4}
+\end{@vartab}\newline
+\edef\LastSpeaker{#3}%
+}
+
+\newcommand{\@simultabSingle}[5]{%
+\begin{@vartab}{#5}
+\IfStrEq{#1}{}{}{#1:} & \@simullineA{#2}\\[-0.5em]
+\IfStrEq{#3}{}{}{#3:} & \@simullineB{#4}
+\end{@vartab}\newline
+\edef\LastSpeaker{#3}%
+}
+
+\newcommand{\simul}[4]{\if@ttfamily\ttfamily\fi%
+\StrCount{#2}{[}[\@SimulCnt]
+\if@singlebracket%
+	\@simultabSingle{#1}{#2}{#3}{#4}{\@SimulCnt}%
+\else%
+	\@simultab{#1}{#2}{#3}{#4}{\@SimulCnt}%
+\fi%
+} 
+
+\newcommand{\alone}[2]{\if@ttfamily\ttfamily\fi%
+\begin{tabular}{@{}p{\@SpeakerWidth}@{ }l@{ }}
+\IfStrEq{#1}{}{}{#1:} & #2
+\end{tabular}\newline%}
+\edef\LastSpeaker{#1}%
+}
+
+\endinput

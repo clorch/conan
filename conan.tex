@@ -1,0 +1,31 @@
+\documentclass[a4paper]{scrartcl}
+
+\usepackage[tt,singlebracket]{conan}
+
+\begin{document}
+
+\title{ConAn}
+\subtitle{Typeset Conversion Analysis}
+\author{Clemens Horch}
+
+\maketitle
+
+\section{Examples}
+
+This is a numbered conversation analysis example:
+
+\begin{conan}[Anton] % specify the longest speaker name if it has more than one character
+	\alone{Anton}{And that that actually the choice they made will be subjected}
+	\simul{}{to who's doing [ the ] the choose yes }{Lisa}{[ The choosing ] }
+	\simul{Lisa}{It subjects to availability and who to make [ choice }{Anton}{[ Yes }
+\end{conan}
+
+This is a \texttt{conan} environment without example numbering:
+
+\begin{conan*}
+	\alone{A}{And that that actually the choice they made will be subjected to }
+	\simul{}{who's doing [ the ] the choose yes }{Z}{[ The choosing ]}
+\end{conan*}
+
+
+\end{document}
