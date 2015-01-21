@@ -37,20 +37,15 @@
 \RequirePackage{xstring}
 \RequirePackage{tabularx}
 \RequirePackage{calc}
+\RequirePackage{kvoptions}
+\RequirePackage{setspace}
 
-\newcommand\hide[1]{\nullfont #1}
+\DeclareBoolOption{tt}
+\DeclareBoolOption{singlebracket}
+\DeclareStringOption[1]{spacing}[1]
 
-\newif\if@ttfamily\@ttfamilyfalse
-\DeclareOption{tt}{
-	\@ttfamilytrue
-}
+\ProcessKeyvalOptions*
 
-\newif\if@singlebracket\@singlebracketfalse
-\DeclareOption{singlebracket}{
-  \@singlebrackettrue
-}
-
-\ProcessOptions\relax
 
 \newlength\@SpeakerWidth%
 
@@ -59,12 +54,14 @@
 	\ignorespaces%
 	\setlength\@SpeakerWidth{\widthof{#1:}}%
 	\refstepcounter{equation}%
+	\begin{spacing}{\conan@spacing}%
 	\begin{list}{(\theequation)}{%
 		\setlength{\listparindent}{0pt}%
 		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
-	}%\raggedright%
+	}%
 	\item }
 {\end{list}%
+	\end{spacing}%
 	\par\noindent%
 	\ignorespacesafterend}
 	
@@ -72,10 +69,11 @@
 {\noindent%
 	\ignorespaces%
 	\setlength\@SpeakerWidth{\widthof{#1:}}%
+	\linespread{1}%
 	\begin{list}{}{%
 		\setlength{\listparindent}{0pt}%
 		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
-	}%\raggedright%
+	}%
 	\item }
 {\end{list}%
 	\par\noindent%
@@ -120,16 +118,16 @@
 \edef\LastSpeaker{#3}%
 }
 
-\newcommand{\simul}[4]{\if@ttfamily\ttfamily\fi%
+\newcommand{\simul}[4]{\ifconan@tt\ttfamily\fi%
 \StrCount{#2}{[}[\@SimulCnt]
-\if@singlebracket%
+\ifconan@singlebracket%
 	\@simultabSingle{#1}{#2}{#3}{#4}{\@SimulCnt}%
 \else%
 	\@simultab{#1}{#2}{#3}{#4}{\@SimulCnt}%
 \fi%
 } 
 
-\newcommand{\alone}[2]{\if@ttfamily\ttfamily\fi%
+\newcommand{\alone}[2]{\ifconan@tt\ttfamily\fi%
 \begin{tabularx}{\linewidth}[t]{@{}p{\@SpeakerWidth}@{ }X}
 \IfStrEq{#1}{}{}{#1:} & #2
 \end{tabularx}\newline%}
