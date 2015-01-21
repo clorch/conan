@@ -1,3 +1,4 @@
+% !TEX root = conan.tex
 % --------------------------------------------------------------------------
 % the ConAn package
 % 
@@ -35,8 +36,9 @@
 
 \RequirePackage{xstring}
 \RequirePackage{tabularx}
-\RequirePackage{covington}
 \RequirePackage{calc}
+
+\newcommand\hide[1]{\nullfont #1}
 
 \newif\if@ttfamily\@ttfamilyfalse
 \DeclareOption{tt}{
@@ -53,19 +55,30 @@
 \newlength\@SpeakerWidth%
 
 \newenvironment{conan}[1][A]%
-	{\noindent\ignorespaces%
+{\noindent%
+	\ignorespaces%
 	\setlength\@SpeakerWidth{\widthof{#1:}}%
-	\begin{enumerate}%
-	\item[(\exampleno)]}%
-	{\end{enumerate}\par\noindent%
+	\refstepcounter{equation}%
+	\begin{list}{(\theequation)}{%
+		\setlength{\listparindent}{0pt}%
+		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
+	}%\raggedright%
+	\item }
+{\end{list}%
+	\par\noindent%
 	\ignorespacesafterend}
 	
-\newenvironment{conan*}[1][A]%%
-	{\noindent\ignorespaces%
+\newenvironment{conan*}[1][A]%
+{\noindent%
+	\ignorespaces%
 	\setlength\@SpeakerWidth{\widthof{#1:}}%
-	\begin{enumerate}%
-	\item[]}%
-	{\end{enumerate}\par\noindent%
+	\begin{list}{}{%
+		\setlength{\listparindent}{0pt}%
+		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
+	}%\raggedright%
+	\item }
+{\end{list}%
+	\par\noindent%
 	\ignorespacesafterend}
 
 \newenvironment{@vartab}[1]
@@ -117,7 +130,7 @@
 } 
 
 \newcommand{\alone}[2]{\if@ttfamily\ttfamily\fi%
-\begin{tabularx}{\columnwidth}[t]{@{}p{\@SpeakerWidth}@{ }X}
+\begin{tabularx}{\linewidth}[t]{@{}p{\@SpeakerWidth}@{ }X}
 \IfStrEq{#1}{}{}{#1:} & #2
 \end{tabularx}\newline%}
 \edef\LastSpeaker{#1}%

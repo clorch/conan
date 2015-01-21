@@ -1,6 +1,7 @@
 \documentclass[a4paper]{scrartcl}
 
 \usepackage[tt,singlebracket]{conan}
+\usepackage{covington}
 
 \begin{document}
 
@@ -12,14 +13,23 @@
 
 \section{Examples}
 
-This is a numbered conversation analysis example:
+Example \ref{conan1} is a numbered conversation analysis example:
 
-\begin{conan}[Anton] % specify the longest speaker name if it has more than one character
+\begin{conan}[Anton]
 	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna }
 	\simul{}{aliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
+	\label{conan1}
 \end{conan}
 
-This is a \texttt{conan} environment without example numbering:
+
+\texttt{conan} environments can easily be mixed with \texttt{example} environments from the \texttt{covington} package. Both use the equation counter for numbering.
+
+\begin{example}
+Covington Example
+\label{covington1}
+\end{example}
+
+The next example is a \texttt{conan*} environment without numbering.
 
 \begin{conan*}
 	\alone{A}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam}
