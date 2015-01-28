@@ -1,13 +1,12 @@
 \documentclass[a4paper]{scrartcl}
 
-\usepackage[tt,singlebracket]{conan}
-\usepackage[spacing=1,tt,singlebracket]{conan}
+\usepackage[linenumbers,spacing=1,tt,singlebracket]{conan}
 \usepackage{covington}
 
 \begin{document}
 
 \title{ConAn}
-\subtitle{Typeset Conversion Analysis}
+\subtitle{Typeset Conversation Analysis}
 \author{Clemens Horch}
 
 \maketitle
@@ -17,8 +16,9 @@
 Example \ref{conan1} is a numbered conversation analysis example:
 
 \begin{conan}[Anton]
-	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna }
-	\simul{}{aliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
+	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
+	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
+	\simul{}{magna aliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
 	\label{conan1}
 \end{conan}
 
@@ -30,11 +30,17 @@ Covington Example
 \label{covington1}
 \end{example}
 
-The next example is a \texttt{conan*} environment without numbering.
+The next example is a \texttt{conan*} environment without numbering and custom line numbers.
 
-\begin{conan*}
-	\alone{A}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam}
-	\simul{}{ erat, [ sed diam ] voluptua.}{Z}{[ ero eos et ] }
+\setcounter{conanline}{23}
+\begin{conan*}[Anton]
+	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
+	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
+	\simul{}{magnaaliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
 \end{conan*}
+
+It is recommended to use ConAn with the conan.py preprocessor. (\ref{example1.conan}) is an example for an automatically processed file.
+
+\input{example1.conan}
 
 \end{document}

@@ -35,19 +35,22 @@
 \ProvidesPackage{conan}[2015/01/17 Conversation Analysis Formatting]
 
 \RequirePackage{xstring}
-\RequirePackage{tabularx}
 \RequirePackage{calc}
 \RequirePackage{kvoptions}
 \RequirePackage{setspace}
 
 \DeclareBoolOption{tt}
 \DeclareBoolOption{singlebracket}
+\DeclareBoolOption{linenumbers}
 \DeclareStringOption[1]{spacing}[1]
 
 \ProcessKeyvalOptions*
 
 
 \newlength\@SpeakerWidth%
+\newcounter{@SimulCnt}
+\newcounter{conanline}
+\setcounter{conanline}{1}%
 
 \newenvironment{conan}[1][A]%
 {\noindent%
@@ -62,6 +65,7 @@
 	\item }
 {\end{list}%
 	\end{spacing}%
+	\setcounter{conanline}{1}%
 	\par\noindent%
 	\ignorespacesafterend}
 	
@@ -69,18 +73,26 @@
 {\noindent%
 	\ignorespaces%
 	\setlength\@SpeakerWidth{\widthof{#1:}}%
-	\linespread{1}%
+	\begin{spacing}{\conan@spacing}%
 	\begin{list}{}{%
 		\setlength{\listparindent}{0pt}%
 		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
 	}%
 	\item }
 {\end{list}%
+	\end{spacing}%
+	\setcounter{conanline}{1}%
 	\par\noindent%
 	\ignorespacesafterend}
+	
+\newcommand{\@lineNo}{\ifconan@linenumbers\scriptsize\theconanline & \fi}
 
 \newenvironment{@vartab}[1]
-{\begin{tabular}[t]{@{}p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{ }}}
+{\ifconan@linenumbers%
+	\begin{tabular}[t]{@{}r@{ }p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{}}%
+\else%
+	\begin{tabular}[t]{@{}p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{}}%
+\fi}
 {\end{tabular}}
 
 \newcommand{\@simulline}[1]{{%
@@ -103,35 +115,38 @@
 
 \newcommand{\@simultab}[5]{%
 \begin{@vartab}{#5}
-\IfStrEq{#1}{}{}{#1:} & \@simulline{#2}\\
-\edef\LastSpeaker{#1}%
-\IfStrEq{#3}{}{}{#3:} & \@simulline{#4}
+\@lineNo & \IfStrEq{#1}{}{}{#1:} & \@simulline{#2}\stepcounter{conanline}\\
+\@lineNo & \IfStrEq{#3}{}{}{#3:} & \@simulline{#4}\stepcounter{conanline}
 \end{@vartab}\newline
-\edef\LastSpeaker{#3}%
 }
 
 \newcommand{\@simultabSingle}[5]{%
 \begin{@vartab}{#5}
-\IfStrEq{#1}{}{}{#1:} & \@simullineA{#2}\\[-0.5em]
-\IfStrEq{#3}{}{}{#3:} & \@simullineB{#4}
+\@lineNo \IfStrEq{#1}{}{}{#1:} & \@simullineA{#2}\stepcounter{conanline}\\[-0.5em]
+\@lineNo \IfStrEq{#3}{}{}{#3:} & \@simullineB{#4}\stepcounter{conanline}
 \end{@vartab}\newline
-\edef\LastSpeaker{#3}%
 }
 
 \newcommand{\simul}[4]{\ifconan@tt\ttfamily\fi%
-\StrCount{#2}{[}[\@SimulCnt]
+\StrCount{#2}{[}[\@SimulCntA]
+\StrCount{#2}{]}[\@SimulCntB]
+\setcounter{@SimulCnt}{\@SimulCntA}
+\addtocounter{@SimulCnt}{\@SimulCntB}
 \ifconan@singlebracket%
-	\@simultabSingle{#1}{#2}{#3}{#4}{\@SimulCnt}%
+	\@simultabSingle{#1}{#2}{#3}{#4}{\the@SimulCnt}%
 \else%
-	\@simultab{#1}{#2}{#3}{#4}{\@SimulCnt}%
+	\@simultab{#1}{#2}{#3}{#4}{\the@SimulCnt}%
 \fi%
 } 
 
 \newcommand{\alone}[2]{\ifconan@tt\ttfamily\fi%
-\begin{tabularx}{\linewidth}[t]{@{}p{\@SpeakerWidth}@{ }X}
-\IfStrEq{#1}{}{}{#1:} & #2
-\end{tabularx}\newline%}
-\edef\LastSpeaker{#1}%
+\ifconan@linenumbers%
+	\begin{tabular}[t]{@{}r@{ }p{\@SpeakerWidth}@{ }l}%
+\else%
+	\begin{tabular}[t]{@{}p{\@SpeakerWidth}@{ }l}%
+\fi%
+\@lineNo \IfStrEq{#1}{}{}{#1:} & #2\stepcounter{conanline}
+\end{tabular}\newline%
 }
 
 \endinput
