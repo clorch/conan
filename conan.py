@@ -106,9 +106,18 @@ class ConAn:
 
 					#  flush line, if too long
 					if len(Ao) + len(nextA) > textlen or len(Bo) + len(nextB) > textlen:
+						Ao_new = ''
+						Bo_new = ''
+						if len(Ao) + len(nextA) > textlen and Bo != '':
+							Ao += '='
+							Ao_new = '= '		
+						if len(Bo) + len(nextB) > textlen and Ao != '':
+							Bo += '='
+							Bo_new = '= '
+						
 						self.output_simul(A[0], Ao, B[0], Bo)				
-						Ao = ''
-						Bo = ''
+						Ao = Ao_new
+						Bo = Bo_new
 
 					# append next word to line
 					if len(chunkA) > 0:
