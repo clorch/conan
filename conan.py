@@ -7,6 +7,7 @@ __email__ = "mail@clemenshorch.de"
 
 import re
 import os
+import sys
 
 class ConAn:
 	def __init__(self, label, linelength):
@@ -145,11 +146,11 @@ class ConAn:
 			self.output += '\t\label{' + self.label + '}\n'
 		self.output += '\end{conan}\n'
 
-def process_file(filename):
+def process_file(filename, linelength):
 	label = filename.replace(os.path.sep, '.')
 	label = label.replace('..', '', 1)
 
-	conan = ConAn(label, 66)
+	conan = ConAn(label, linelength)
 
 	with open(filename, 'rb') as f:
 		conan.append(f.read())
@@ -163,10 +164,17 @@ def process_file(filename):
 
 
 if __name__ == "__main__":
+	linelength = 64
+	
+	if len(sys.argv) > 1:
+		linelength = int(sys.argv[1])
+	else:
+		print 'no linewidth specified, assuming ' + str(linelength)
+
 	for root, dir, files in os.walk(u'.'):
 		for f in files:
 			name = os.path.join(root, f)
 			if not name.endswith('.conan'):
 				continue
-			process_file(name)
+			process_file(name, linelength)
 
