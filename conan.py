@@ -44,6 +44,8 @@ class ConAn:
 		else:
 			if As == self.lastspeaker:
 				As = ''
+			else:
+				self.lastspeaker = As
 			self.output += '\t\simul{' + As + '}{' + At + '}{' + Bs + '}{' + Bt + '}\n'
 			self.linecount += 2
 			
