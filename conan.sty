@@ -62,8 +62,9 @@
 		\setlength{\listparindent}{0pt}%
 		\def\makelabel##1{##1\hfil}%  % put labels flushleft in space available
 	}%
-	\item }
-{\end{list}%
+	\item \begin{minipage}[t]{\linewidth}}
+{\end{minipage}%
+	\end{list}%
 	\end{spacing}%
 	\setcounter{conanline}{1}%
 	\par\noindent%
