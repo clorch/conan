@@ -78,7 +78,17 @@ class ConAn:
 
 			# no overlap
 			if len(turn[1]) == 1:
-				self.output_simul(turn[0], turn[1][0], '', '')
+				words = turn[1][0].split()
+				text = ''
+				while len(words) > 0:
+					if len(text) + len(words[0]) > textlen:
+						self.output_alone(turn[0], text)
+						text = ''
+
+					if len(words) > 0:
+						text += words.pop(0) + ' '
+
+				self.output_alone(turn[0], text)
 				continue
 
 			# overlap
