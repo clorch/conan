@@ -116,8 +116,8 @@
 
 \newcommand{\@simultab}[5]{%
 \begin{@vartab}{#5}
-\@lineNo & \IfStrEq{#1}{}{}{#1:} & \@simulline{#2}\stepcounter{conanline}\\
-\@lineNo & \IfStrEq{#3}{}{}{#3:} & \@simulline{#4}\stepcounter{conanline}
+\@lineNo \IfStrEq{#1}{}{}{#1:} & \@simulline{#2}\stepcounter{conanline}\\
+\@lineNo \IfStrEq{#3}{}{}{#3:} & \@simulline{#4}\stepcounter{conanline}
 \end{@vartab}\newline
 }
 
