@@ -17,6 +17,7 @@ class ConAn:
 		self.output = ''
 		self.label = label
 		self.lastspeaker = ''
+		self.linecount = 0
 
 	def getbracket(self, idx):
 		if idx == 0:
@@ -32,6 +33,7 @@ class ConAn:
 		else:
 			self.lastspeaker = speaker
 		self.output += '\t\\alone{' + speaker + '}{'+ text + '}\n'
+		self.linecount += 1
 
 
 	def output_simul(self, As, At, Bs, Bt):
@@ -43,7 +45,7 @@ class ConAn:
 			if As == self.lastspeaker:
 				As = ''
 			self.output += '\t\simul{' + As + '}{' + At + '}{' + Bs + '}{' + Bt + '}\n'
-			self.lastspeaker = Bs	
+			self.linecount += 2
 			
 
 	def append(self, txt):
@@ -69,13 +71,14 @@ class ConAn:
 
 	def process(self):
 		textlen = self.linelength - len(self.longestspeaker) - 2
-		self.output = '\\begin{conan}[' + self.longestspeaker + ']\n'
 
 		turns_iter = enumerate(self.turns)
 		for tidx, turn in turns_iter:
 			# empty lines
 			if turn[0] == '':
 				continue
+
+			self.lastspeaker = ''
 
 			# no overlap
 			if len(turn[1]) == 1:
@@ -142,6 +145,7 @@ class ConAn:
 			# skip next turn
 			next(turns_iter, None)
 
+		self.output = '\\begin{conan}[speaker=' + self.longestspeaker + ',maxline=' + str(self.linecount) + ']\n' + self.output
 		if self.label:
 			self.output += '\t\label{' + self.label + '}\n'
 		self.output += '\end{conan}\n'

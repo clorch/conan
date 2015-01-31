@@ -32,12 +32,13 @@
 %--------------------------------------------------------------
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{conan}[2015/01/17 Conversation Analysis Formatting]
+\ProvidesPackage{conan}[2015/01/31 Conversation Analysis Formatting]
 
 \RequirePackage{xstring}
 \RequirePackage{calc}
 \RequirePackage{kvoptions}
 \RequirePackage{setspace}
+\RequirePackage{keyval}
 
 \DeclareBoolOption{tt}
 \DeclareBoolOption{singlebracket}
@@ -46,16 +47,23 @@
 
 \ProcessKeyvalOptions*
 
+\newcommand*\conansetspeaker{A}
+\newcommand*\conansetmaxline{1}
+\define@key{conanset}{speaker}{\renewcommand*\conansetspeaker{#1}}
+\define@key{conanset}{maxline}{\renewcommand*\conansetmaxline{#1}}
 
 \newlength\@SpeakerWidth%
+\newlength\@LineNumberWidth%
 \newcounter{@SimulCnt}
 \newcounter{conanline}
 \setcounter{conanline}{1}%
 
-\newenvironment{conan}[1][A]%
+\newenvironment{conan}[1][]%
 {\noindent%
 	\ignorespaces%
-	\setlength\@SpeakerWidth{\widthof{#1:}}%
+	\setkeys{conanset}{#1}%
+	\setlength\@SpeakerWidth{\widthof{\conansetspeaker:}}%
+	\setlength\@LineNumberWidth{\widthof{\scriptsize\conansetmaxline~}}%
 	\refstepcounter{equation}%
 	\begin{spacing}{\conan@spacing}%
 	\begin{list}{(\theequation)}{%
@@ -70,10 +78,12 @@
 	\par\noindent%
 	\ignorespacesafterend}
 	
-\newenvironment{conan*}[1][A]%
+\newenvironment{conan*}[1][]%
 {\noindent%
 	\ignorespaces%
-	\setlength\@SpeakerWidth{\widthof{#1:}}%
+	\setkeys{conanset}{#1}%
+	\setlength\@SpeakerWidth{\widthof{\conansetspeaker:}}%
+	\setlength\@LineNumberWidth{\widthof{\scriptsize\conansetmaxline~}}%
 	\begin{spacing}{\conan@spacing}%
 	\begin{list}{}{%
 		\setlength{\listparindent}{0pt}%
@@ -90,7 +100,7 @@
 
 \newenvironment{@vartab}[1]
 {\ifconan@linenumbers%
-	\begin{tabular}[t]{@{}r@{ }p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{}}%
+	\begin{tabular}[t]{@{}p{\@LineNumberWidth}@{ }p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{}}%
 \else%
 	\begin{tabular}[t]{@{}p{\@SpeakerWidth}@{ }*{#1}{l@{ }l@{ }}l@{}}%
 \fi}
@@ -142,7 +152,7 @@
 
 \newcommand{\alone}[2]{\ifconan@tt\ttfamily\fi%
 \ifconan@linenumbers%
-	\begin{tabular}[t]{@{}r@{ }p{\@SpeakerWidth}@{ }l}%
+	\begin{tabular}[t]{@{}p{\@LineNumberWidth}@{ }p{\@SpeakerWidth}@{ }l}%
 \else%
 	\begin{tabular}[t]{@{}p{\@SpeakerWidth}@{ }l}%
 \fi%

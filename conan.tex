@@ -2,6 +2,7 @@
 
 \usepackage[linenumbers,spacing=1,tt,singlebracket]{conan}
 \usepackage{covington}
+%\usepackage{showframe}
 
 \begin{document}
 
@@ -15,7 +16,7 @@
 
 Example \ref{conan1} is a numbered conversation analysis example:
 
-\begin{conan}[Anton]
+\begin{conan}[speaker=Anton]
 	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
 	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
 	\simul{}{magna aliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
@@ -32,8 +33,8 @@ Covington Example
 
 The next example is a \texttt{conan*} environment without numbering and custom line numbers.
 
-\setcounter{conanline}{23}
-\begin{conan*}[Anton]
+\setcounter{conanline}{2345}
+\begin{conan*}[speaker=Anton,maxline=2345]
 	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
 	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
 	\simul{}{magnaaliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
@@ -41,6 +42,7 @@ The next example is a \texttt{conan*} environment without numbering and custom l
 
 It is recommended to use ConAn with the conan.py preprocessor. (\ref{example1.conan}) is an example for an automatically processed file.
 
+\setcounter{equation}{1000}
 \input{example1.conan}
 
 \end{document}
