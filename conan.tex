@@ -16,10 +16,10 @@
 
 Example \ref{conan1} is a numbered conversation analysis example:
 
-\begin{conan}[speaker=Anton]
+\begin{conan}[speaker=Anton,marker]
 	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
 	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
-	\simul{}{magna aliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
+	\simul{}{magna aliquyam erat, [ sed diam ] >>voluptua.}{Zita}{[ ero eos et ] }
 	\label{conan1}
 \end{conan}
 
@@ -34,15 +34,14 @@ Covington Example
 The next example is a \texttt{conan*} environment without numbering and custom line numbers.
 
 \setcounter{conanline}{2345}
-\begin{conan*}[speaker=Anton,maxline=2345]
-	\alone{Anton}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
+\begin{conan*}[maxline=2345]
+	\alone{A}{Lorem ipsum dolor sit amet, consetetur sadipscing elitr, }
 	\alone{}{sed diam nonumy eirmod tempor invidunt ut labore et dolore }
-	\simul{}{magnaaliquyam erat, [ sed diam ] voluptua.}{Zita}{[ ero eos et ] }
+	\simul{}{magnaaliquyam erat, [ sed diam ] voluptua.}{B}{[ ero eos et ] }
 \end{conan*}
 
 It is recommended to use ConAn with the conan.py preprocessor. (\ref{example1.conan}) is an example for an automatically processed file.
 
-\setcounter{equation}{1000}
 \input{example1.conan}
 
 \end{document}

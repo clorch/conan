@@ -18,6 +18,10 @@ class ConAn:
 		self.label = label
 		self.lastspeaker = ''
 		self.linecount = 0
+		self.has_marker = False
+
+	def tlen(self, text):
+		return len(text.replace('>>', ''))
 
 	def getbracket(self, idx):
 		if idx == 0:
@@ -65,6 +69,10 @@ class ConAn:
 			if len(speaker) > len(self.longestspeaker):
 				self.longestspeaker = speaker
 
+			# search for marker sign
+			if '>>' in text:
+				self.has_marker = True
+
 			# split into overlap groups
 			text = text.strip()
 			text = re.split('[\[\]]', text)
@@ -87,7 +95,7 @@ class ConAn:
 				words = turn[1][0].split()
 				text = ''
 				while len(words) > 0:
-					if len(text) + len(words[0]) > textlen:
+					if self.tlen(text) + self.tlen(words[0]) > textlen:
 						self.output_alone(turn[0], text)
 						text = ''
 
@@ -121,13 +129,13 @@ class ConAn:
 						nextB = chunkB[0]
 
 					#  flush line, if too long
-					if len(Ao) + len(nextA) > textlen or len(Bo) + len(nextB) > textlen:
+					if self.tlen(Ao) + self.tlen(nextA) > textlen or self.tlen(Bo) + self.tlen(nextB) > textlen:
 						Ao_new = ''
 						Bo_new = ''
-						if len(Ao) + len(nextA) > textlen and Bo != '':
+						if self.tlen(Ao) + self.tlen(nextA) > textlen and Bo != '':
 							Ao += '='
 							Ao_new = '= '		
-						if len(Bo) + len(nextB) > textlen and Ao != '':
+						if self.tlen(Bo) + self.tlen(nextB) > textlen and Ao != '':
 							Bo += '='
 							Bo_new = '= '
 						
@@ -147,7 +155,13 @@ class ConAn:
 			# skip next turn
 			next(turns_iter, None)
 
-		self.output = '\\begin{conan}[speaker=' + self.longestspeaker + ',maxline=' + str(self.linecount) + ']\n' + self.output
+		header = '\\begin{conan}['
+		header += 'speaker=' + self.longestspeaker
+		header += ',maxline=' + str(self.linecount)
+		if self.has_marker:
+			header += ',marker'
+		header += ']\n'
+		self.output = header + self.output
 		if self.label:
 			self.output += '\t\label{' + self.label + '}\n'
 		self.output += '\end{conan}\n'
