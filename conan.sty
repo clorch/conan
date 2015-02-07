@@ -86,7 +86,7 @@
 %
 \newcommand{\@lineNo}{\ifconan@linenumbers\scriptsize\theconanline & \fi}
 \newcommand{\@marker}[1]{\if@hasMarkers\IfSubStr{#1}{>>}{\conanmarker}{} & \fi}
-\newcommand{\@text}[1]{\StrSubstitute{#1}{>> }{}}
+\newcommand{\@text}[1]{\StrSubstitute{#1}{>> }{>>}[\x]\StrSubstitute{\x}{>>}{}}
 \newcommand{\@speaker}[1]{\IfStrEq{#1}{}{}{#1:}}
 
 
