@@ -80,6 +80,11 @@
 \newcounter{conanline}
 \setcounter{conanline}{1}%
 
+\newlength\@HalfLineHeight
+\newlength\@Spacing
+\setlength{\@Spacing}{{\conan@spacing}pt}
+\setlength{\@HalfLineHeight}{\@Spacing*6}
+
 
 %
 % Formatting macros
@@ -88,6 +93,7 @@
 \newcommand{\@marker}[1]{\if@hasMarkers\IfSubStr{#1}{>>}{\conanmarker}{} & \fi}
 \newcommand{\@text}[1]{\StrSubstitute{#1}{>> }{>>}[\x]\StrSubstitute{\x}{>>}{}}
 \newcommand{\@speaker}[1]{\IfStrEq{#1}{}{}{#1:}}
+\newcommand{\HLRB}[1]{\raisebox{\@HalfLineHeight}[0pt][0pt]{#1}}
 
 
 %
@@ -140,30 +146,30 @@
 \begin{tabular}[t]{@{}%
 	\if@hasMarkers p{\@MarkerWidth}@{ }\fi %
 	\ifconan@linenumbers p{\@LineNumberWidth}@{ }\fi %
-	p{\@SpeakerWidth}@{ } *{#1}{l@{ }l@{ }} l@{}}%
+	p{\@SpeakerWidth}@{ } *{#1}{l@{}l@{}} l@{}}%
 }
 {\end{tabular}}
 
 \newcommand{\@simulline}[1]{{%
 	\StrSubstitute{#1}{>>}{}[\x]%
-	\StrSubstitute{\x}{[}{\string& [}[\x]%
-	\StrSubstitute{\x}{]}{\string& ]}[\x]%
+	\StrSubstitute{\x}{[}{\string~\string&[}[\x]%
+	\StrSubstitute{\x}{]}{\string~\string&]}[\x]%
 	\tokenize{\x}{\x}%
 	\expandafter}\x%
 }
 
 \newcommand{\@simullineA}[1]{{%
 	\StrSubstitute{#1}{>>}{}[\x]%
-	\StrSubstitute{\x}{[}{\string& \string~}[\x]%
-	\StrSubstitute{\x}{]}{\string& \string~}[\x]%
+	\StrSubstitute{\x}{[}{\string~\string&\string~}[\x]%
+	\StrSubstitute{\x}{]}{\string~\string&\string~}[\x]%
 	\tokenize{\x}{\x}%
 	\expandafter}\x%
 }
 
 \newcommand{\@simullineB}[1]{{%
 	\StrSubstitute{#1}{>>}{}[\x]%
-	\StrSubstitute{\x}{[}{\string& \string\raisebox{0.7em}{[}}[\x]%
-	\StrSubstitute{\x}{]}{\string& \string\raisebox{0.7em}{]}}[\x]%
+	\StrSubstitute{\x}{[}{\string~\string&\string\HLRB{[}}[\x]%
+	\StrSubstitute{\x}{]}{\string~\string&\string\HLRB{]}}[\x]%
 	\tokenize{\x}{\x}%
 	\expandafter}\x%
 }
@@ -177,7 +183,7 @@
 
 \newcommand{\@simultabSingle}[5]{%
 	\begin{@vartab}{#5}
-		\@marker{#2} \@lineNo \@speaker{#1} & \@simullineA{#2} \stepcounter{conanline} \\[-0.5em]
+		\@marker{#2} \@lineNo \@speaker{#1} & \@simullineA{#2} \stepcounter{conanline} \\
 		\@marker{#4} \@lineNo \@speaker{#3} & \@simullineB{#4} \stepcounter{conanline}
 	\end{@vartab}\newline
 }
