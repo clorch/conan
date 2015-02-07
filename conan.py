@@ -19,6 +19,7 @@ class ConAn:
 		self.lastspeaker = ''
 		self.linecount = 0
 		self.has_marker = False
+		self.linenumber = 0
 
 	def tlen(self, text):
 		return len(text.replace('>>', ''))
@@ -36,29 +37,29 @@ class ConAn:
 			speaker = ''
 		else:
 			self.lastspeaker = speaker
-		self.output += '\t\\alone{' + speaker + '}{'+ text + '}\n'
+		self.output += '\t\\alone{' + speaker + '}{'+ text.strip() + '}\n'
 		self.linecount += 1
 
-
 	def output_simul(self, As, At, Bs, Bt):
-		if At == '':
+		if At.strip() == '':
 			self.output_alone(Bs, Bt)
-		elif Bt == '':
+		elif Bt.strip() == '':
 			self.output_alone(As, At)
 		else:
 			if As == self.lastspeaker:
 				As = ''
 			else:
 				self.lastspeaker = As
-			self.output += '\t\simul{' + As + '}{' + At + '}{' + Bs + '}{' + Bt + '}\n'
+			self.output += '\t\simul{' + As + '}{' + At.strip() + '}{' + Bs + '}{' + Bt.strip() + '}\n'
 			self.linecount += 2
 			
-
 	def append(self, txt):
 		# process lines
 		for line in txt.splitlines():
+			self.linenumber += 1
+
+			# remove empty lines
 			if line.strip() == '':
-				self.turns.append(['', ''])
 				continue
 
 			#split speaker and text
@@ -75,34 +76,39 @@ class ConAn:
 
 			# split into overlap groups
 			text = text.strip()
-			text = re.split('[\[\]]', text)
+			groups = re.split('[\[\]]', text)
 
-			self.turns.append([speaker, text])
+			self.turns.append({'line':self.linenumber, 'speaker':speaker, 'text':text, 'groups':groups})
 
 	def process(self):
 		textlen = self.linelength - len(self.longestspeaker) - 2
 
 		turns_iter = enumerate(self.turns)
 		for tidx, turn in turns_iter:
-			# empty lines
-			if turn[0] == '':
-				continue
-
 			self.lastspeaker = ''
 
+			# error checking
+			if len(turn['groups']) > 1 and tidx + 1 >= len(self.turns):
+				print "Error at line {:}: last line in file with beginning overlap pair".format(turn['line'])
+				turn['groups'] = [turn['text']]
+
+			if len(turn['groups']) > 1 and len(turn['groups']) != len(self.turns[tidx + 1]['groups']):
+				print "Error at line {:}: number of overlap pairs does not match line {:}".format(turn['line'], self.turns[tidx + 1]['line'])
+				turn['groups'] = [turn['text']]
+
 			# no overlap
-			if len(turn[1]) == 1:
-				words = turn[1][0].split()
+			if len(turn['groups']) == 1:
+				words = turn['text'].split()
 				text = ''
 				while len(words) > 0:
 					if self.tlen(text) + self.tlen(words[0]) > textlen:
-						self.output_alone(turn[0], text)
+						self.output_alone(turn['speaker'], text)
 						text = ''
 
 					if len(words) > 0:
 						text += words.pop(0) + ' '
 
-				self.output_alone(turn[0], text)
+				self.output_alone(turn['speaker'], text)
 				continue
 
 			# overlap
@@ -112,11 +118,11 @@ class ConAn:
 			Bo = ''
 
 			# loop over all overlap groups
-			for i,_ in enumerate(A[1]):
-				A[1][i] = self.getbracket(i) + A[1][i]
-				B[1][i] = self.getbracket(i) + B[1][i]
-				chunkA = A[1][i].split()
-				chunkB = B[1][i].split()
+			for i,_ in enumerate(A['groups']):
+				A['groups'][i] = self.getbracket(i) + A['groups'][i]
+				B['groups'][i] = self.getbracket(i) + B['groups'][i]
+				chunkA = A['groups'][i].split()
+				chunkB = B['groups'][i].split()
 
 				# loop over all words in a overlap group
 				while(len(chunkA) > 0 or len(chunkB) > 0):
@@ -132,14 +138,14 @@ class ConAn:
 					if self.tlen(Ao) + self.tlen(nextA) > textlen or self.tlen(Bo) + self.tlen(nextB) > textlen:
 						Ao_new = ''
 						Bo_new = ''
-						if self.tlen(Ao) + self.tlen(nextA) > textlen and Bo != '':
+						if self.tlen(Ao) + self.tlen(nextA) > textlen and Bo.strip() != '':
 							Ao += '='
 							Ao_new = '= '		
-						if self.tlen(Bo) + self.tlen(nextB) > textlen and Ao != '':
+						if self.tlen(Bo) + self.tlen(nextB) > textlen and Ao.strip() != '':
 							Bo += '='
 							Bo_new = '= '
 						
-						self.output_simul(A[0], Ao, B[0], Bo)				
+						self.output_simul(A['speaker'], Ao, B['speaker'], Bo)				
 						Ao = Ao_new
 						Bo = Bo_new
 
@@ -149,8 +155,15 @@ class ConAn:
 						
 					if len(chunkB) > 0:
 						Bo += chunkB.pop(0) + ' '
-						
-			self.output_simul(A[0], Ao, B[0], Bo)	
+
+					# align both lines with spaces before next group starts
+					if len(chunkA) == 0:
+						Ao += ' ' * (self.tlen(Bo) - self.tlen(Ao))
+					if len(chunkB) == 0:
+						Bo += ' ' * (self.tlen(Ao) - self.tlen(Bo))
+
+			# output remaining buffer content				
+			self.output_simul(A['speaker'], Ao, B['speaker'], Bo)
 
 			# skip next turn
 			next(turns_iter, None)
