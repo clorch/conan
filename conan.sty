@@ -32,7 +32,7 @@
 %--------------------------------------------------------------
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{conan}[2015/02/01 Conversation Analysis Formatting]
+\ProvidesPackage{conan}[2015/02/07 Conversation Analysis Formatting]
 
 \RequirePackage{xstring}
 \RequirePackage{calc}
@@ -86,7 +86,7 @@
 %
 \newcommand{\@lineNo}{\ifconan@linenumbers\scriptsize\theconanline & \fi}
 \newcommand{\@marker}[1]{\if@hasMarkers\IfSubStr{#1}{>>}{\conanmarker}{} & \fi}
-\newcommand{\@text}[1]{\StrSubstitute{#1}{>>}{}}
+\newcommand{\@text}[1]{\StrSubstitute{#1}{>> }{}}
 \newcommand{\@speaker}[1]{\IfStrEq{#1}{}{}{#1:}}
 
 
