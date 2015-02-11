@@ -73,7 +73,7 @@
 \newlength\@SpeakerWidth%
 \newlength\@LineNumberWidth%
 \newlength\@MarkerWidth%
-\setlength\@MarkerWidth{\widthof{\conanmarker}}%
+\setlength\@MarkerWidth{\widthof{\conanmarker\enspace}}%
 
 \newcounter{@SimulCnt}
 
@@ -89,10 +89,10 @@
 %
 % Formatting macros
 %
-\newcommand{\@lineNo}{\ifconan@linenumbers\scriptsize\theconanline & \fi}
-\newcommand{\@marker}[1]{\if@hasMarkers\IfSubStr{#1}{>>}{\conanmarker}{} & \fi}
-\newcommand{\@text}[1]{\StrSubstitute{#1}{>> }{>>}[\x]\StrSubstitute{\x}{>>}{}}
-\newcommand{\@speaker}[1]{\IfStrEq{#1}{}{}{#1:}}
+\newcommand{\@lineNo}{\ifconan@linenumbers\parbox[t]{\@LineNumberWidth}{\scriptsize\theconanline\hfill}\fi}
+\newcommand{\@marker}[1]{\if@hasMarkers\parbox[t]{\@MarkerWidth}{\IfSubStr{#1}{>>}{\conanmarker}{}\hfill}\fi}
+\newcommand{\@text}[1]{\mbox{\StrSubstitute{#1}{>> }{>>}[\x]\StrSubstitute{\x}{>>}{}}}
+\newcommand{\@speaker}[1]{\parbox[t]{\@SpeakerWidth}{\IfStrEq{#1}{}{}{#1:}\hfill}}
 \newcommand{\HLRB}[1]{\raisebox{\@HalfLineHeight}[0pt][0pt]{#1}}
 
 
@@ -103,8 +103,8 @@
 {\noindent%
 	\ignorespaces%
 	\setkeys{conan}{#1}%
-	\setlength\@SpeakerWidth{\widthof{\@conanMaxSpeaker:}}%
-	\setlength\@LineNumberWidth{\widthof{\scriptsize\@conanMaxLine}}%
+	\setlength\@SpeakerWidth{\widthof{\@conanMaxSpeaker:\enspace}}%
+	\setlength\@LineNumberWidth{\widthof{\scriptsize\@conanMaxLine\enspace}}%
 	\refstepcounter{equation}%
 	\begin{spacing}{\conan@spacing}%
 	\begin{list}{(\theequation)}{%
@@ -123,8 +123,8 @@
 {\noindent%
 	\ignorespaces%
 	\setkeys{conan}{#1}%
-	\setlength\@SpeakerWidth{\widthof{\@conanMaxSpeaker:}}%
-	\setlength\@LineNumberWidth{\widthof{\scriptsize\@conanMaxLine}}%
+	\setlength\@SpeakerWidth{\widthof{\@conanMaxSpeaker:~}}%
+	\setlength\@LineNumberWidth{\widthof{\scriptsize\@conanMaxLine\enspace}}%
 	\begin{spacing}{\conan@spacing}%
 	\begin{list}{}{%
 		\setlength{\listparindent}{0pt}%
@@ -142,12 +142,7 @@
 % Helper macros
 %
 \newenvironment{@vartab}[1]
-{%
-\begin{tabular}[t]{@{}%
-	\if@hasMarkers p{\@MarkerWidth}@{ }\fi %
-	\ifconan@linenumbers p{\@LineNumberWidth}@{ }\fi %
-	p{\@SpeakerWidth}@{ } *{#1}{l@{}l@{}} l@{}}%
-}
+{\begin{tabular}[t]{@{}l@{}l@{}l@{}*{#1}{l@{}l@{}}l@{}}}
 {\end{tabular}}
 
 \newcommand{\@simulline}[1]{{%
@@ -176,15 +171,15 @@
 
 \newcommand{\@simultab}[5]{%
 	\begin{@vartab}{#5}
-		\@marker{#2} \@lineNo \@speaker{#1} & \@simulline{#2} \stepcounter{conanline} \\
-		\@marker{#4} \@lineNo \@speaker{#3} & \@simulline{#4} \stepcounter{conanline}
+		\@marker{#2} & \@lineNo & \@speaker{#1} & \@simulline{#2} \stepcounter{conanline} \\
+		\@marker{#4} & \@lineNo & \@speaker{#3} & \@simulline{#4} \stepcounter{conanline}
 	\end{@vartab}\newline
 }
 
 \newcommand{\@simultabSingle}[5]{%
 	\begin{@vartab}{#5}
-		\@marker{#2} \@lineNo \@speaker{#1} & \@simullineA{#2} \stepcounter{conanline} \\
-		\@marker{#4} \@lineNo \@speaker{#3} & \@simullineB{#4} \stepcounter{conanline}
+		\@marker{#2} & \@lineNo & \@speaker{#1} & \@simullineA{#2} \stepcounter{conanline} \\
+		\@marker{#4} & \@lineNo & \@speaker{#3} & \@simullineB{#4} \stepcounter{conanline}
 	\end{@vartab}\newline
 }
 
@@ -198,15 +193,10 @@
 	\else%
 		\@simultab{#1}{#2}{#3}{#4}{\the@SimulCnt}%
 	\fi%
-} 
+}
 
 \newcommand{\alone}[2]{\ifconan@tt\ttfamily\fi%
-	\begin{tabular}[t]{@{} %
-		\if@hasMarkers p{\@MarkerWidth}@{ }\fi%
-		\ifconan@linenumbers p{\@LineNumberWidth}@{ }\fi%
-		p{\@SpeakerWidth}@{ }l}%
-			\@marker{#2} \@lineNo \@speaker{#1} & \@text{#2} \stepcounter{conanline}
-	\end{tabular}\newline%
+	\@marker{#2}\@lineNo\@speaker{#1}\@text{#2} \\ \stepcounter{conanline}
 }
 
 \endinput

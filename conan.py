@@ -25,9 +25,9 @@ class ConAn:
 		return len(text.replace('>>', ''))
 
 	def is_empty(self, text):
+		text = text.replace('=', '')
 		text = re.sub('\s\s+', ' ', text)
 		text = text.strip()
-		text = text.replace('=', '')
 		return text == ''
 
 	def getbracket(self, idx):
@@ -39,6 +39,9 @@ class ConAn:
 			return ']'
 
 	def output_alone(self, speaker, text):
+		if self.is_empty(text):
+			return
+
 		if speaker == self.lastspeaker:
 			speaker = ''
 		else:
