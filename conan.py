@@ -24,6 +24,12 @@ class ConAn:
 	def tlen(self, text):
 		return len(text.replace('>>', ''))
 
+	def is_empty(self, text):
+		text = re.sub('\s\s+', ' ', text)
+		text = text.strip()
+		text = text.replace('=', '')
+		return text == ''
+
 	def getbracket(self, idx):
 		if idx == 0:
 			return ''
@@ -41,16 +47,19 @@ class ConAn:
 		self.linecount += 1
 
 	def output_simul(self, As, At, Bs, Bt):
-		if At.strip() == '':
+		if self.is_empty(At):
 			self.output_alone(Bs, Bt)
-		elif Bt.strip() == '':
+		elif self.is_empty(Bt):
 			self.output_alone(As, At)
 		else:
 			if As == self.lastspeaker:
 				As = ''
 			else:
 				self.lastspeaker = As
-			self.output += '\t\simul{' + As + '}{' + At.strip() + '}{' + Bs + '}{' + Bt.strip() + '}\n'
+
+			At = re.sub('\s\s+', ' ', At.strip())
+			Bt = re.sub('\s\s+', ' ', Bt.strip())
+			self.output += '\t\simul{' + As + '}{' + At + '}{' + Bs + '}{' + Bt + '}\n'
 			self.linecount += 2
 			
 	def append(self, txt):
