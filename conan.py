@@ -20,6 +20,7 @@ class ConAn:
 		self.linecount = 0
 		self.has_marker = False
 		self.linenumber = 0
+		self.firstline = 0
 
 	def tlen(self, text):
 		return len(text.replace('>>', ''))
@@ -74,6 +75,16 @@ class ConAn:
 			if line.strip() == '':
 				continue
 
+			# handle command lines
+			if line[0] == '#':
+				self.handle_command(line)
+				continue
+
+			# check if line has correct syntax 'speaker:text'
+			if ':' not in line:
+				print "Error at line {:}: no ':' found, skipping line".format(self.linenumber)
+				continue
+
 			#split speaker and text
 			speaker, text =  line.split(':', 1)
 			speaker = speaker.strip()
@@ -91,6 +102,21 @@ class ConAn:
 			groups = re.split('[\[\]]', text)
 
 			self.turns.append({'line':self.linenumber, 'speaker':speaker, 'text':text, 'groups':groups})
+
+	def handle_command(self, line):
+		if not '=' in line:
+			print "Error at line {:}: no '=' found".format(self.linenumber)
+
+		# split command name and value
+		cmd = line[1:].split('=')
+
+		if cmd[0] == 'line':
+			if not cmd[1].isdigit():
+				print "Error at line {:}: invalid value '{:}'".format(self.linenumber, cmd[1])
+				return	
+			self.firstline = int(cmd[1])
+		else:
+			print "Error at line {:}: unknown command '{:}'".format(self.linenumber, cmd[0])
 
 	def process(self):
 		textlen = self.linelength - len(self.longestspeaker) - 2
@@ -180,7 +206,12 @@ class ConAn:
 			# skip next turn
 			next(turns_iter, None)
 
-		header = '\\begin{conan}['
+		header = ''
+		if self.firstline > 0:
+			header = '\\setcounter{conanline}{' + str(self.firstline) + '}\n'
+		if self.firstline > self.linecount:
+			self.linecount = self.firstline + self.linecount
+		header += '\\begin{conan}['
 		header += 'speaker=' + self.longestspeaker
 		header += ',maxline=' + str(self.linecount)
 		if self.has_marker:
