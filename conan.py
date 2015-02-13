@@ -8,6 +8,7 @@ __email__ = "mail@clemenshorch.de"
 import re
 import os
 import sys
+import codecs
 
 class ConAn:
 	def __init__(self, label, linelength):
@@ -228,14 +229,14 @@ def process_file(filename, linelength):
 
 	conan = ConAn(label, linelength)
 
-	with open(filename, 'rb') as f:
+	with codecs.open(filename, encoding='utf-8', mode='rb') as f:
 		conan.append(f.read())
 
 	print 'processing ' + filename
 	conan.process()
 	#print(conan.output)
 
-	with open(filename + '.tex', 'wb') as f:
+	with codecs.open(filename + '.tex', encoding='utf-8', mode='wb') as f:
 		f.write(conan.output)
 
 
